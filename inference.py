@@ -70,24 +70,26 @@ def inference(inference_loader, model, args):
     batch_time = AverageMeter()
     annotation_dir = os.path.join(args.data, 'DAVIS_val/Annotations/480p')
     annotation_list = sorted(os.listdir(annotation_dir))
-
+    pred_visualize = None
     last_video = 0
     frame_idx = 0
     with torch.no_grad():
         for i, (input, curr_video, img_original) in enumerate(inference_loader):
             if curr_video != last_video:
                 # save prediction
-                pred_visualize = pred_visualize.cpu().numpy()
-                for f in range(1, frame_idx):
-                    save_path = args.save
-                    save_name = str(f).zfill(5)
-                    video_name = annotation_list[last_video]
-                    save_prediction(np.asarray(pred_visualize[f - 1], dtype=np.int32),
-                                    palette, save_path, save_name, video_name)
+                if pred_visualize is not None:
+                    pred_visualize = pred_visualize.cpu().numpy()
+                    for f in range(1, frame_idx):
+                        save_path = args.save
+                        save_name = str(f).zfill(5)
+                        video_name = annotation_list[last_video]
+                        save_prediction(np.asarray(pred_visualize[f - 1], dtype=np.int32),
+                                        palette, save_path, save_name, video_name)
 
                 frame_idx = 0
                 print("End of video %d. Processing a new annotation..." % (last_video + 1))
             if frame_idx == 0:
+                pred_visualize = None
                 input = input.to(device)
                 with torch.no_grad():
                     feats_history = model(input)

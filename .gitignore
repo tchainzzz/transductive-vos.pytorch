@@ -2,3 +2,6 @@
 __pycache__
 .vscode
 .idea
+DAVIS_train/
+DAVIS_val/
+*.pth

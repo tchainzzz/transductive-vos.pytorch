@@ -92,8 +92,8 @@ def save_prediction(prediction, palette, save_path, save_name, video_name):
     video_path = os.path.join(save_path, video_name)
     if not os.path.exists(video_path):
         os.makedirs(video_path)
-    img.save('{}/{}.png'.format(video_path, save_name))
-
+    fname = '{}/{}.png'.format(video_path, save_name)
+    img.save(fname)
 
 def rgb2class(img, centroids):
     """
